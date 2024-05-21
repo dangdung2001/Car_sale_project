@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+ <definition name="base.definition">
+  	<put-attribute name="title" value = "" />
+    <put-attribute name="header" value="/WEB-INF/view/layout/header.jsp" cascade="true"/>
+    <put-attribute name="footer" value= "/WEB-INF/view/layout/footer.jsp" />
+  </definition>
+
+  <!-- homepage -->
+  <definition name="home" template="/WEB-INF/view/user/homepage.jsp" extends="base.definition">
+  	<put-attribute name="title" value = "web shop cars"></put-attribute>
+  </definition>
+  
+  <!-- LOGIN -->
+   <definition name="login" template="/WEB-INF/view/user/login.jsp" extends="base.definition">
+  	<put-attribute name="title" value = "LOGIN"></put-attribute>
+  </definition>
+  
+  <!-- REGISTER  -->
+   <definition name="register" template="/WEB-INF/view/user/register.jsp" extends="base.definition">
+  	<put-attribute name="title" value = "REGISTER"></put-attribute>
+  </definition>
+  
+  <!-- PROFILE  -->
+   <definition name="profile" template="/WEB-INF/view/user/profile.jsp" extends="base.definition">
+  	<put-attribute name="title" value = "profile"></put-attribute>
+  </definition>
+  
+  
+   <!-- Verify Email  -->
+   <definition name="verifyEmail" template="/WEB-INF/view/user/verifyEmail.jsp" extends="base.definition">
+  	<put-attribute name="title" value = "Verify Email"></put-attribute>
+  </definition>
+  
+</tiles-definitions>
