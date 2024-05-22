@@ -1,10 +1,15 @@
 
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Ngăn chặn hành vi mặc định của form
 
-            // Gọi hàm xử lý đăng nhập
-            authLogin();
-        });
+document.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById('loginForm').scrollIntoView({ behavior: 'smooth' });
+});
+
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+	event.preventDefault(); // Ngăn chặn hành vi mặc định của form
+
+	// Gọi hàm xử lý đăng nhập
+	authLogin();
+});
 
 function authLogin() {
 
@@ -19,10 +24,10 @@ function authLogin() {
 		if (regex.test(password)) {
 			console.log("abccc")
 			const user = {
-				"username" : username,
-				"password" : password
+				"username": username,
+				"password": password
 			}
-			
+
 			const requestOptions = {
 				method: 'POST',
 				headers: {
@@ -30,14 +35,28 @@ function authLogin() {
 				},
 				body: JSON.stringify(user)
 			};
-			
-			fetch(url,requestOptions)
-			.then(response => response.json())
-			.then(data => {
-					console.log(data)
-					
-					/*window.location.href = "http://localhost:8080/shop_cars/home"*/
+
+			fetch(url, requestOptions)
+				.then(response => response.json())
+				.then(data => {
+					var jwtObject = JSON.parse(JSON.stringify(data));
+
+					if (jwtObject.jwt != null) {
+
+						localStorage.setItem('jwt', jwtObject.jwt);
+						window.location.href = "http://localhost:8080/shop_cars/home"
 					}
+					else {
+						var errorLogin = document.getElementById("ErrorLogin");
+						var passwordInput = document.getElementById("password");
+						passwordInput.value = "";
+						errorLogin.style.display = "block";
+						errorLogin.style.color = "#f50057";
+						errorLogin.innerHTML = "Username or password incorrect";
+					}
+
+				}
+
 				)
 		}
 	}

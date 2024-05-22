@@ -8,7 +8,7 @@
 <meta charset="UTF-8">
 
 <!-- link css -->
-  <link rel="stylesheet" href="<c:url value="/assets/css/login.css" />"> 
+<link rel="stylesheet" href="<c:url value="/assets/css/login.css" />">
 <link href="<c:url value="/assets/css/style-prefix.css" />"
 	rel="stylesheet">
 <!--
@@ -31,9 +31,15 @@
 		<div style="margin: auto;" class="screen">
 			<div class="screen__content">
 				<form id="loginForm" action="#" method="post" class="login">
+
+					<div>
+						<span style="display: none" id="ErrorLogin"></span>
+					</div>
+
 					<div class="login__field">
-						<i class="login__icon fas fa-user"></i> <input id="username" name="username"
-							type="text" class="login__input" placeholder="User name / Email">
+						<i class="login__icon fas fa-user"></i> <input id="username"
+							name="username" type="text" class="login__input"
+							placeholder="User name / Email">
 					</div>
 					<div class="login__field">
 						<i class="login__icon fas fa-lock"></i> <input id="password"
@@ -63,12 +69,14 @@
 
 	<!-- footer -->
 	<tiles:insertAttribute name="footer" />
+
 	
-	<script type="text/javascript" src="<c:url value='/assets/js/login.js'/>" ></script>
-	
-		<script type="module"
-			src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-		<script nomodule
-			src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+	<script type="text/javascript"
+		src="<c:url value='/assets/js/login.js'/>"></script>
+
+	<script type="module"
+		src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule
+		src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </body>
 </html>

@@ -23,15 +23,17 @@ public class authService {
 	private jwtService jwtService;
 	
 	public AuthenticationResponse authentication (AuthenticationRequest authRequest) {
-		
-		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
-		
-		UserDetails userdetails = this.userDetailsservice.loadUserByUsername(authRequest.getUsername());
-		
-		String jwt = jwtService.generateToken(userdetails);
-		
+		String jwt = null;
+		try {
+			authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+			UserDetails userdetails = this.userDetailsservice.loadUserByUsername(authRequest.getUsername());
+			
+			 jwt = jwtService.generateToken(userdetails);
+			 
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		AuthenticationResponse authResp = new AuthenticationResponse(jwt);
-		
 		return authResp;
 		
 	}
