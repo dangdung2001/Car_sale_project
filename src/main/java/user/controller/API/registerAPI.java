@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
@@ -76,5 +77,32 @@ public class registerAPI {
 		
 	}
 	
+	@PostMapping("/sendCodeToMail")
+	public ResponseEntity<Boolean> sendCodeToMail ( HttpServletRequest request){
+		
+		int code = this.registerService.createCode();
+		
+		request.getSession().setAttribute("code", code);
+		request.getSession().setMaxInactiveInterval(60);
+		
+		  userEntity newuser =(userEntity) request.getSession().getAttribute("user");
+		 
+		
+		  String mailregister = newuser.getEmail();
+		return ResponseEntity.ok(this.registerService.sendVerificationCode(mailregister, code));
+	}
 	
+	@PostMapping("/confirmCode")
+	public ResponseEntity<Boolean> confirmCodeToMail ( @RequestParam("code") int code, HttpServletRequest request){
+		
+		Integer codeinserver =(Integer) request.getSession().getAttribute("code");
+		if(codeinserver != null) {
+			
+			 if(this.registerService.checkcodeMail(code, codeinserver)) {
+				 
+				 return ResponseEntity.ok(true);
+			 }
+		}
+		return ResponseEntity.ok(false);
+	}
 }

@@ -22,6 +22,7 @@ import javax.mail.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,50 +43,49 @@ public class registerService {
 	@Autowired
 	private registerDAO registerDAO;
 
-	public static int sendVerificationCode(String recipientEmail) {
-        
+	public int createCode() {
 		Random coderandom = new Random();
-		int verificationCode = coderandom.nextInt(10000000, 1000000000);
-        final String username = "phamdangdung5621@gmail.com"; 
-        final String password = "fyoh ykfj jhuy knto"; 
+		return coderandom.nextInt(10000000, 1000000000);
+	}
 
-        
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-        
-        Session session = Session.getInstance(props,
-                new javax.mail.Authenticator() {
-                    protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
-                    }
-                }); 
-        
-        
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            message.setSubject("Verification Code");
-            message.setText("Your verification code is: " + verificationCode);
+	public static boolean sendVerificationCode(String recipientEmail, int code) {
 
-            Transport.send(message);
+		final String username = "phamdangdung5621@gmail.com";
+		final String password = "zguq vzbf tajx qypr";
 
-            System.out.println("Email sent successfully.");
+		Properties props = new Properties();
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.port", "587");
+		props.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
-        } catch (MessagingException e) {
-        	
-            throw new RuntimeException(e);
-        }
-        
-        return verificationCode;
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(username, password);
+			}
+		});
+
+		try {
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(username));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+			message.setSubject("Verification Code");
+			message.setText("Your verification code is: " + code);
+
+			Transport.send(message);
+
+			System.out.println("Email sent successfully.");
+
+		} catch (MessagingException e) {
+
+			System.out.println("error sent conde to mail : " + e);
+			return false;
 		}
 
-	
-	
+		return true;
+	}
+
 	/**
 	 * city is available in box address of page 'create account' value is code of
 	 * city in database , when user choice city then code sent to this method fetch
@@ -136,59 +136,50 @@ public class registerService {
 		return wardsDTO;
 	}
 
-//	create account for user , return userDTO to controller 
+	
+	
 	@Transactional(readOnly = false)
-	public userDTO createAccount(userEntity newuser) {
+	public UserDetails createAccount(userEntity newuser) {
 
-		userDTO userdto = new userDTO();
+		UserDetails user = null;
 		if (newuser != null) {
 
 			if (newuser.getPassword().equals(newuser.getConfirmPassword())) {
 				String passwordEncoded = PasswordEncoder().encode(newuser.getPassword());
 				newuser.setPassword(passwordEncoded);
 			} else
-				return null;
+				return user;
 
+//			set address
 			String address = newuser.getWard() + "," + newuser.getDistrict() + "," + newuser.getCity();
 			newuser.setAddress(address);
 
-			System.out.println(newuser.getMonth());
+//			set birthday
 			Month month = Month.valueOf(newuser.getMonth().toUpperCase());
 			LocalDate birthday = LocalDate.of(Integer.valueOf(newuser.getYear()), month,
 					Integer.valueOf(newuser.getDay()));
 			newuser.setBirthday(birthday);
 
+//			set time create
 			newuser.setTimeCreateAccount(LocalDateTime.now());
 
+//			add roles
 			roleEntity roleuser = new roleEntity(1, "USER");
 			List<roleEntity> roles = new ArrayList<roleEntity>();
 			roles.add(roleuser);
-
 			newuser.setRoles(roles);
 
 			newuser.setAvatar("default");
 
-			userEntity newuserSaved = this.registerDAO.insertNewUser(newuser);
+//			insert user to sql
+			user = this.registerDAO.insertNewUser(newuser);
 
-			if (newuserSaved != null) {
-
-				userdto.setFirst_name(newuser.getFirstname());
-
-				userdto.setLast_name(newuser.getLastname());
-
-				userdto.setAddress(newuser.getAddress());
-
-				userdto.setAvatar(newuser.getAvatar());
-
-				userdto.setGender(newuser.getGender());
-
-				userdto.setMail(newuser.getEmail());
-
-			}
 		}
-		return userdto;
+		return user;
 	}
 
+	
+	
 	@Transactional
 	public userEntity getUserByUsername(String username) {
 
@@ -205,14 +196,12 @@ public class registerService {
 	private BCryptPasswordEncoder PasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
-	
-	public String uploadfileProcessing(byte[] byteImg,String nameImg, HttpServletRequest request, String username) {
+
+	public String uploadfileProcessing(byte[] byteImg, String nameImg, HttpServletRequest request, String username) {
 
 		if (byteImg != null) {
 			try {
-				String filename = username + "avatar"
-						+ nameImg.substring(nameImg.lastIndexOf("."));
+				String filename = username + "avatar" + nameImg.substring(nameImg.lastIndexOf("."));
 				System.out.println(filename);
 				String ServerPathSaveFile = request.getSession(true).getServletContext().getRealPath("/")
 						+ "WEB-INF/filesUser/avatar/" + filename;
@@ -233,6 +222,11 @@ public class registerService {
 		}
 		return null;
 	}
-
+	
+	
+	public boolean checkcodeMail (int code, int codeinServer) {
+		
+		return code == codeinServer;
+	}
 
 }

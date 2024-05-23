@@ -37,4 +37,11 @@ public class authService {
 		return authResp;
 		
 	}
+	
+	public AuthenticationResponse register (UserDetails user) { 
+		String jwt = jwtService.generateToken(user);
+		
+		AuthenticationResponse authResp = new AuthenticationResponse(jwt);
+		return authResp;
+	}
 }

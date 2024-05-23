@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,99 +33,55 @@ public class signupController {
 	@Autowired
 	private registerService registerService;
 
+//	show form register
 	@RequestMapping("/signup")
 	public ModelAndView showSignupForm(HttpServletRequest request) {
 
-		userDTO userDTO = new userDTO();
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("register");
-		mv.addObject("user", userDTO);
 		return mv;
 	}
 
+//	after submit form register , to verify email 
 	@RequestMapping(path = "/verifyemail", method = RequestMethod.POST)
-	public ModelAndView showformVerifyEmail(@RequestParam("file") MultipartFile imgAvatar,
-			@ModelAttribute("user") @Valid userEntity user, HttpServletRequest request) throws IOException {
+	public ModelAndView showformVerifyEmail(@RequestParam("file") MultipartFile file, @ModelAttribute("user") @Valid userEntity user, HttpServletRequest request)
+			throws IOException {
 
-		ModelAndView mv = new ModelAndView();
+		request.getSession().setAttribute("user", user);
 		
-		HttpSession session = request.getSession();
+		request.getSession().setAttribute("byteFile", file.getBytes());
 		
-		if(!imgAvatar.isEmpty()) {
-			
-			int codeVerifyEmail = this.registerService.sendVerificationCode(user.getEmail().trim());
-			
-			System.out.println(codeVerifyEmail);
-			
-			mv.setViewName("verifyEmail");
-			
-			session.setAttribute("code", codeVerifyEmail);
-			session.setMaxInactiveInterval(300);
-			
-			session.setAttribute("newuser", user);
-			
-			session.setAttribute("byteImg", imgAvatar.getBytes());
-			
-			session.setAttribute("nameImg", imgAvatar.getOriginalFilename());
-		}
-		else {
-			mv.setViewName("register");
-		}
-		return mv;
-	}
-	
-	
-	@RequestMapping("/verifyemailfailed")
-	public ModelAndView showformVerifyMailFailed () {
+		request.getSession().setAttribute("namefile" , file.getOriginalFilename());
 		
 		ModelAndView mv = new ModelAndView();
-		mv.addObject("annotationFailed", "code not correct!!! please check your email");
+		
 		mv.setViewName("verifyEmail");
+		
 		return mv;
 	}
-	
-	
+
+
 	/**
-	 *  create account when the user enters the correct code 
-	 * */
+	 * create account when the user enters the correct code
+	 */
 	@RequestMapping(path = "/processingRegister", method = RequestMethod.POST)
-	public ModelAndView registerUserAccount( HttpServletRequest request, @RequestParam("codeUser") int code) {
+	public ModelAndView registerUserAccount(HttpServletRequest request) {
 
-		HttpSession session = request.getSession();
-		
-		int codeVerifyEmail = (int) session.getAttribute("code");
-		if(code != codeVerifyEmail) {
-			// add annotation to user when verify code failed !
-			return new ModelAndView("redirect:/user/verifyemailfailed");
-		}
-		
-		System.out.println("new account : " + session.getAttribute("newuser"));
-		String nameImg = (String) session.getAttribute("nameImg");
-		byte[] byteImg = (byte[]) session.getAttribute("byteImg");
-		userEntity user = (userEntity) session.getAttribute("newuser");
-		
-		
-		
-		if (user != null && byteImg != null) {
-
-			this.registerService.uploadfileProcessing(byteImg, nameImg, request, user.getUsername());
-			userDTO newuserSavedDTO = this.registerService.createAccount(user);
-
-			if (newuserSavedDTO != null) {
-				session.setAttribute("userLoged", newuserSavedDTO);
-				System.out.println("user is login sucess!");
+			userEntity newUser = (userEntity) request.getSession().getAttribute("user");
+			
+			byte[] bytes = (byte[]) request.getSession().getAttribute("byteFile");
+			
+			String filename = (String) request.getSession().getAttribute("namefile");
+			
+			UserDetails user = this.registerService.createAccount(newUser);
+			
+			this.registerService.uploadfileProcessing(bytes, filename, request, newUser.getUsername());
+			if (user != null) {
 				return new ModelAndView("redirect:/home");
 			}
 
-		}
-		session.removeAttribute("newuser");
-		session.removeAttribute("imgAvatar");
-		
-		request.setAttribute("resutlRegister", "create account is fail!");
-		System.out.println("user is login fail");
 		return new ModelAndView("redirect:/user/signup");
 
 	}
 
-	
 }

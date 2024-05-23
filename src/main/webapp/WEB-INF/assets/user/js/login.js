@@ -1,7 +1,7 @@
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    document.getElementById('loginForm').scrollIntoView({ behavior: 'smooth' });
+	document.getElementById('loginForm').scrollIntoView({ behavior: 'smooth' });
 });
 
 document.getElementById('loginForm').addEventListener('submit', function(event) {
@@ -22,7 +22,6 @@ function authLogin() {
 	if (username != null && password != null) {
 
 		if (regex.test(password)) {
-			console.log("abccc")
 			const user = {
 				"username": username,
 				"password": password
@@ -46,18 +45,18 @@ function authLogin() {
 						localStorage.setItem('jwt', jwtObject.jwt);
 						window.location.href = "http://localhost:8080/shop_cars/home"
 					}
-					else {
-						var errorLogin = document.getElementById("ErrorLogin");
-						var passwordInput = document.getElementById("password");
-						passwordInput.value = "";
-						errorLogin.style.display = "block";
-						errorLogin.style.color = "#f50057";
-						errorLogin.innerHTML = "Username or password incorrect";
-					}
 
 				}
 
 				)
+		}
+		else {
+			var errorLogin = document.getElementById("ErrorLogin");
+			var passwordInput = document.getElementById("password");
+			passwordInput.value = "";
+			errorLogin.style.display = "block";
+			errorLogin.style.color = "#f50057";
+			errorLogin.innerHTML = "Username or password incorrect";
 		}
 	}
 }
