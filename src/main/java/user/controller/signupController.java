@@ -61,27 +61,6 @@ public class signupController {
 	}
 
 
-	/**
-	 * create account when the user enters the correct code
-	 */
-	@RequestMapping(path = "/processingRegister", method = RequestMethod.POST)
-	public ModelAndView registerUserAccount(HttpServletRequest request) {
-
-			userEntity newUser = (userEntity) request.getSession().getAttribute("user");
-			
-			byte[] bytes = (byte[]) request.getSession().getAttribute("byteFile");
-			
-			String filename = (String) request.getSession().getAttribute("namefile");
-			
-			UserDetails user = this.registerService.createAccount(newUser);
-			
-			this.registerService.uploadfileProcessing(bytes, filename, request, newUser.getUsername());
-			if (user != null) {
-				return new ModelAndView("redirect:/home");
-			}
-
-		return new ModelAndView("redirect:/user/signup");
-
-	}
+	
 
 }

@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,8 +18,8 @@
 	integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
 	crossorigin="anonymous" />
 
-<link href="<c:url value="/assets/css/style-prefix.css" />"
-	rel="stylesheet">
+<link href="<c:url value='/assets/css/style-prefix.css' />"
+	rel="stylesheet">	
 <!--
 	    - google font link
 	  -->
@@ -36,7 +37,9 @@
 	<div class="jumbotron jumbotron-fluid">
 		<div class="container">
 			<div class="row">
-				<div
+				<div style="border-radius: 20px;
+				background-color: #fff8dc;
+				box-shadow: rgba(100, 100, 111, 0.2) 0p"
 					class="col-12 col-sm-8 col-md-6 col-lg-4 offset-sm-2 offset-md-3 offset-lg-4">
 					<h1 class="mb-3 text-center">SIGN UP</h1>
 
@@ -75,7 +78,7 @@
 
 						<!-- user name  -->
 						<div class="form-group">
-							<label for="username">Username: at least 8 characters</label> <input
+							<label for="username">Username: <p style="display: inline;font-size: 14px;">at least 8 characters</p></label> <input
 								onchange="checkusernameisExisted()" type="text"
 								class="form-control" placeholder="username" id="username"
 								name="username" required />
@@ -89,14 +92,14 @@
 								class="form-control" id="password" name="password" required />
 
 							<lable id="notifyPassValid"></lable>
-							<ul style="display: none" id='strongPass'>
-								<li style="color: '#f22c3d'">must contain at least one
+							<ul style="display: block; font-size: 14px;" id='strongPass'>
+								<li style="color: '#f22c3d'">- must contain at least one
 									uppercase character</li>
-								<li style="color: '#f22c3d'">must contain at least one
+								<li style="color: '#f22c3d'">- must contain at least one
 									lowercase character</li>
-								<li style="color: '#f22c3d'">must contain at least one
+								<li style="color: '#f22c3d'">- must contain at least one
 									numeric character</li>
-								<li style="color: '#f22c3d'">Password must be eight
+								<li style="color: '#f22c3d'">- Password must be eight
 									characters or longer</li>
 							</ul>
 						</div>
@@ -330,9 +333,7 @@
 
 	<!-- Optional JavaScript -->
 
-	<script type="text/javascript"
-		src="<c:url value='/assets/js/register.js'/>"></script>
-
+	<script type="text/javascript" src="<c:url value='/assets/js/register.js'/>"></script>
 	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
 		integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"

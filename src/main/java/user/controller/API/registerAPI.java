@@ -9,12 +9,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -31,6 +34,9 @@ public class registerAPI {
 
 	@Autowired
 	private registerService registerService;
+	
+	@Autowired
+	private authService authService;
 	
 	
 
@@ -80,11 +86,11 @@ public class registerAPI {
 	@PostMapping("/sendCodeToMail")
 	public ResponseEntity<Boolean> sendCodeToMail ( HttpServletRequest request){
 		
-		int code = this.registerService.createCode();
+		Integer code = this.registerService.createCode();
 		
 		request.getSession().setAttribute("code", code);
-		request.getSession().setMaxInactiveInterval(60);
-		
+
+		System.out.println(request.getSession().getAttribute("code"));
 		  userEntity newuser =(userEntity) request.getSession().getAttribute("user");
 		 
 		
@@ -95,7 +101,9 @@ public class registerAPI {
 	@PostMapping("/confirmCode")
 	public ResponseEntity<Boolean> confirmCodeToMail ( @RequestParam("code") int code, HttpServletRequest request){
 		
-		Integer codeinserver =(Integer) request.getSession().getAttribute("code");
+		Integer codeinserver = (Integer)request.getSession().getAttribute("code");
+		System.out.println("code in session : " + codeinserver);
+		System.out.println("code user : " + code);
 		if(codeinserver != null) {
 			
 			 if(this.registerService.checkcodeMail(code, codeinserver)) {
@@ -104,5 +112,31 @@ public class registerAPI {
 			 }
 		}
 		return ResponseEntity.ok(false);
+	}
+	
+	/**
+	 * create account when the user enters the correct code
+	 */
+	@PostMapping(path = "/processingRegister")
+	public ResponseEntity<AuthenticationResponse> registerUserAccount(HttpServletRequest request) {
+
+			userEntity newUser = (userEntity) request.getSession().getAttribute("user");
+			
+			byte[] bytes = (byte[]) request.getSession().getAttribute("byteFile");
+			
+			String filename = (String) request.getSession().getAttribute("namefile");
+			
+			UserDetails user = this.registerService.createAccount(newUser);
+			
+			this.registerService.uploadfileProcessing(bytes, filename, request, newUser.getUsername());
+			
+			if (user != null) {
+				AuthenticationResponse authresp = this.authService.register(user);
+				System.out.println(authresp.getJwt());
+				return ResponseEntity.ok(authresp);
+			}
+
+		return ResponseEntity.ok(new AuthenticationResponse(null));
+
 	}
 }

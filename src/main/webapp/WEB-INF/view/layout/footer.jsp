@@ -255,48 +255,95 @@
 
 	</div>
 
-	 <script type="text/javascript">
+	<script type="text/javascript">
 		
-		document.addEventListener("DOMContentLoaded", function() {
-		    var links = document.querySelectorAll('a');
-		    links.forEach(function(link) {
-		        link.addEventListener('click', function(event) {
-		            event.preventDefault(); 
-	
-		            var jwt = localStorage.getItem('jwt');
-		            var originalHref = link.getAttribute('href'); 
-		            var url = "http://localhost:8080/shop_cars/" + originalHref;
-		            if (jwt) {
-		            	fetch(url, {
+	document.addEventListener("DOMContentLoaded", function() {
+	    var links = document.querySelectorAll('a');
+	    links.forEach(function(link) {
+	    link.addEventListener('click', function(event) {
+	    
+	      event.preventDefault(); 
+	            
+	    
+	    const url = link.href;
+	    fetchWithJwt(url)
+	            .then(html => {
+	                document.open();
+	                document.write(html);
+	                document.close();
+	                history.pushState(null, '', url);
+	            })
+	            .catch(error => {
+	                console.error('Error:', error);
+	            });
+	            
+	        });
+	    })
+	})
+
+		
+		
+
+		function fetchWithJwt(url) {
+		    let jwt = localStorage.getItem('jwt');
+		    return fetch(url, {
+		        method: 'GET',
+		        headers: {
+		            'Authorization': 'Bearer ' + jwt
+		        }
+		    })
+		    .then(response => {
+		        console.log(response);
+		        const Value = response.headers.get('exception');
+		        console.log(Value);
+		        if (response.ok) {
+		            return response.text();
+		        } else if (Value == "ExpiredJwtException") {
+		            return refreshToken().then(newJwt => {
+		                return fetch(url, {
 		                    method: 'GET',
 		                    headers: {
-		                        'Authorization': 'Bearer ' + jwt
+		                        'Authorization': 'Bearer ' + newJwt
 		                    }
-		                })
-		                .then(response => {
+		                }).then(response => {
 		                    if (response.ok) {
 		                        return response.text();
+		                    } else {
+		                        throw new Error('Failed to fetch with new token');
 		                    }
-		                    throw new Error('Network response was not ok.');
-		                })
-		                .then(html => {
-		                    document.open();
-		                    document.write(html);
-		                    document.close();
-		                })
-		                .catch(error => {
-		                    console.error('Error during login fetch:', error);
 		                });
-		                
-		            } else {
-		                window.location.href = "http://localhost:8080/shop_cars/login";
-		            }
-		        });
+		            });
+		        } else {
+		            throw new Error('Request failed');
+		        }
 		    });
-		});
+		}
+
+		
+		function refreshToken() {
+		    return fetch("http://localhost:8080/shop_cars/api/v1/login/refreshToken", {
+		        method: 'POST',
+		        headers: {
+		            'Authorization': 'Bearer ' + localStorage.getItem('jwt'),
+		            'isRefreshToken': 'true'
+		        }
+		    })
+		    .then(response => {
+		        if (!response.ok) {
+		            throw new Error('Failed to refresh token');
+		        }
+		        return response.json();
+		    })
+		    .then(data => {
+		        localStorage.setItem('jwt', data.jwt);
+		        return data.jwt;
+		    });
+		}
+		
+		
 		
 	</script>
- 
+
 </footer>
 
 
