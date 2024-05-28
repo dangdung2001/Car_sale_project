@@ -57,6 +57,9 @@ function displayAddress (){
     Array.from(contents_body).forEach(content => {
         content.style.display = "none";
     })
+    
+    fetchAddressUser();
+	    
     address.style.display = 'block';
 }
 
@@ -92,3 +95,92 @@ Array.from(itemHeaderOder).forEach(item => {
         item.className = 'KI5har mRVNLm';
     })
 })
+
+
+function fetchAddressUser (){
+	
+var name_address = document.getElementById("name_address");
+	
+	
+ var url = "http://localhost:8080/shop_cars/api/user/fetchAddressUser";
+	    var requestOptions = {
+	        method : 'POST',
+	        headers : {
+	            'content-type' : 'application/json',
+	            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+	        }
+	    }
+
+	    fetch(url, requestOptions).then(response => {
+			console.log(response);
+	        return response.json();
+	    }).then(data => {
+			
+			for(index = 0 ; index < data.length ; index ++){
+				
+				name_address.innerHTML = data[index].name;
+			}
+	        
+	    })
+	
+}
+
+
+document.getElementById('changePassForm').addEventListener('submit', function(event) {
+	event.preventDefault(); 
+	
+	changePassUser();
+});
+
+
+function changePassUser (){
+	
+	
+	var newpass_input = document.getElementById("confirmPassword");
+	var password = document.getElementById("password");
+	var notifyChangePass = document.getElementById("notifyChangePass");
+	
+	if(newpass_input.value != null && newpass_input.value.length >= 8){
+		
+	
+ 		var url = "http://localhost:8080/shop_cars/api/user/changePassUser";
+	    var requestOptions = {
+	        method : 'POST',
+	        headers : {
+	            'content-type' : 'application/json',
+	            'Authorization': 'Bearer ' + localStorage.getItem('jwt')
+	        },
+	        body : JSON.stringify({
+				'newpass': newpass_input.value	
+			})
+	    }
+	    
+	    
+
+	    fetch(url, requestOptions).then(response => {
+			console.log(response);
+	        return response.json();
+	    }).then(data => {
+			
+			console.log(data);
+			if(data){
+				notifyChangePass.innerHTML = "change password succes!"
+				password.value = '';
+				newpass_input.value = '';
+				
+				
+			}
+			
+	        
+	    })
+	 }
+	 else {
+		 console.log("password is incorrect")
+	 }
+	 
+	
+}
+
+
+
+

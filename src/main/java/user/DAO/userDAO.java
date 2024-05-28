@@ -59,8 +59,16 @@ public class userDAO{
 	}
 	
 //	update user
-	public userEntity updateUser (userEntity user) {
-		return null;
+	@Transactional(readOnly = false)
+	public boolean updateUser (userEntity user) {
+		
+		try {
+			this.hibernateTemplate.update(user);
+			return true;
+		} catch (Exception e) {
+			System.out.println("update user error : " + e);
+			return false;
+		}
 	}
 	
 //	delete user

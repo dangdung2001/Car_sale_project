@@ -19,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -88,14 +90,21 @@ public class userEntity implements UserDetails{
 	@Column
 	private LocalDateTime TimeCreateAccount;
 	
-	@OneToMany(fetch = FetchType.EAGER)
+	@OneToMany(mappedBy="users",fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
 	private List<roleEntity> roles;
+	
+	@OneToMany(mappedBy = "userEntity",fetch = FetchType.EAGER)
+	@Fetch(value = FetchMode.SUBSELECT)
+	private List<addressEntity> addresses;
 
+	
+	
 
 	public userEntity(int id, String avatar, String username, String password, String confirmPassword, String firstname,
 			String lastname, String address, String city, String district, String ward, LocalDate birthday, String day,
 			String month, String year, String gender, String email, LocalDateTime timeCreateAccount,
-			List<roleEntity> roles) {
+			List<roleEntity> roles , List<addressEntity> addresses) {
 		
 		this.avatar = avatar;
 		this.username = username;
@@ -115,6 +124,7 @@ public class userEntity implements UserDetails{
 		this.email = email;
 		this.TimeCreateAccount = timeCreateAccount;
 		this.roles = roles;
+		this.addresses = addresses;
 	}
 
 	public userEntity() {
@@ -297,6 +307,15 @@ public class userEntity implements UserDetails{
 			roles.add(new SimpleGrantedAuthority(roleEntity.getRole()));
 		}
 		return roles;
+	}
+	
+	
+	public List<addressEntity> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<addressEntity> addresses) {
+		this.addresses = addresses;
 	}
 
 	@Override

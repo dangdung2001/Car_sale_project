@@ -29,6 +29,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
 
+import user.entity.addressEntity;
 import user.entity.districtEntity;
 import user.entity.roleEntity;
 import user.entity.wardEntity;
@@ -93,7 +94,7 @@ public class springconfig extends WebMvcConfigurerAdapter {
 		sessionFactory.setHibernateProperties(hibernateproperties);
 
 //		annotated classes 
-		sessionFactory.setAnnotatedClasses(userEntity.class, districtEntity.class, wardEntity.class, roleEntity.class);
+		sessionFactory.setAnnotatedClasses(userEntity.class, districtEntity.class, wardEntity.class, roleEntity.class, addressEntity.class);
 
 		return sessionFactory;
 	}

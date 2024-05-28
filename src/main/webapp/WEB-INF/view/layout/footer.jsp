@@ -254,6 +254,7 @@
 		</div>
 
 	</div>
+	
 
 	<script type="text/javascript">
 		
@@ -286,6 +287,7 @@
 
 		function fetchWithJwt(url) {
 		    let jwt = localStorage.getItem('jwt');
+		    if(jwt){
 		    return fetch(url, {
 		        method: 'GET',
 		        headers: {
@@ -317,6 +319,11 @@
 		            throw new Error('Request failed');
 		        }
 		    });
+		    }
+		    else {
+		    	window.location.href = "http://localhost:8080/shop_cars/login"
+		    }
+		    
 		}
 
 		
@@ -339,10 +346,16 @@
 		        return data.jwt;
 		    });
 		}
+		 
+		
+		
 		
 		
 		
 	</script>
+	
+	
+	
 
 </footer>
 

@@ -24,6 +24,9 @@ public class UserDetailsservice implements UserDetailsService{
 	@Autowired
 	private loginDAO loginDAO;
 	
+	@Autowired
+	private userDAO userDao;
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		userEntity user = this.loginDAO.fetchUserByUsername(username);
@@ -37,6 +40,11 @@ public class UserDetailsservice implements UserDetailsService{
 		}
 		
 		return new User(user.getUsername().trim(), user.getPassword().trim(),authories);
+	}
+	
+	public boolean updateUser (userEntity user) {
+		
+		return userDao.updateUser(user);
 	}
 	
 }
