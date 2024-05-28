@@ -1,5 +1,8 @@
 package user.DTO;
 
+import java.time.LocalDate;
+
+import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -12,20 +15,25 @@ public class userDTO {
 
 	@NotNull
 	@NotEmpty
-	private String first_name;
+	private String username;
+	
+	@NotNull
+	@NotEmpty
+	private String firstname;
 
 	@NotNull
 	@NotEmpty
-	private String last_name;
+	private String lastname;
 
 	@NotNull
 	@NotEmpty
-	private String Mail;
+	private String email;
 
 	@NotNull
 	@NotEmpty
-	private String address;
-
+	private String birthdayString;
+	
+	
 	@NotNull
 	@NotEmpty
 	private String gender;
@@ -34,16 +42,17 @@ public class userDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public userDTO(@NotNull @NotEmpty String avatar, @NotNull @NotEmpty String first_name,
-			@NotNull @NotEmpty String last_name, @NotNull @NotEmpty String mail, @NotNull @NotEmpty String address,
+	public userDTO(@NotNull @NotEmpty String avatar, @NotNull @NotEmpty String username,  @NotNull @NotEmpty String first_name,
+			@NotNull @NotEmpty String last_name, @NotNull @NotEmpty String mail, @NotNull @NotEmpty String birthday,
 			@NotNull @NotEmpty String gender) {
 		super();
 		this.avatar = avatar;
-		this.first_name = first_name;
-		this.last_name = last_name;
-		Mail = mail;
-		this.address = address;
+		this.username = username;
+		this.firstname = first_name;
+		this.lastname = last_name;
+		this.email = mail;
 		this.gender = gender;
+		this.birthdayString = birthday;
 	}
 
 	public String getAvatar() {
@@ -54,14 +63,16 @@ public class userDTO {
 		this.avatar = avatar;
 	}
 
-	public String getAddress() {
-		return address;
+	
+	public String getUsername() {
+		return username;
 	}
 
-	public void setAddress(String address) {
-		this.address = address;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
+	
 	public String getGender() {
 		return gender;
 	}
@@ -70,34 +81,39 @@ public class userDTO {
 		this.gender = gender;
 	}
 
-	public String getFirst_name() {
-		return first_name;
+
+	public String getFirstname() {
+		return firstname;
 	}
 
-	public void setFirst_name(String first_name) {
-		this.first_name = first_name;
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
 	}
 
-	public String getLast_name() {
-		return last_name;
+	public String getLastname() {
+		return lastname;
 	}
 
-	public void setLast_name(String last_name) {
-		this.last_name = last_name;
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 
-	public String getMail() {
-		return Mail;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setMail(String mail) {
-		Mail = mail;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
-	@Override
-	public String toString() {
-		return "userDTO [avatar=" + avatar + ", first_name=" + first_name + ", last_name=" + last_name + ", Mail="
-				+ Mail + ", address=" + address + ", gender=" + gender + "]";
+	public String getBirthdayString() {
+		return birthdayString;
 	}
 
+	public void setBirthdayString(String birthdayString) {
+		this.birthdayString = birthdayString;
+	}
+
+	
+	
 }

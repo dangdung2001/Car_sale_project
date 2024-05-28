@@ -258,7 +258,7 @@
 	<script type="text/javascript">
 		
 	document.addEventListener("DOMContentLoaded", function() {
-	    var links = document.querySelectorAll('a');
+	    var links = document.querySelectorAll('a[auth-request]');
 	    links.forEach(function(link) {
 	    link.addEventListener('click', function(event) {
 	    

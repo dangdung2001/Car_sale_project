@@ -69,6 +69,9 @@ public class userEntity implements UserDetails{
 	private LocalDate birthday;
 	
 	@Transient
+	private String birthdayString;
+	
+	@Transient
 	private String day;
 	@Transient
 	private String month;
@@ -258,7 +261,20 @@ public class userEntity implements UserDetails{
 	}
 
 	public String getGender() {
+		
 		return gender;
+	}
+	
+	public String getBirthdayString() {
+		
+		int day = this.birthday.getDayOfMonth();
+		int month = this.birthday.getMonthValue();
+		int year = this.birthday.getYear();
+		return day + "/" + month + "/" + year;
+	}
+
+	public void setBirthdayString(String birthdayString) {
+		this.birthdayString = birthdayString;
 	}
 
 	public void setGender(String gender) {
@@ -273,15 +289,7 @@ public class userEntity implements UserDetails{
 		this.roles = roles;
 	}
 
-	@Override
-	public String toString() {
-		return "userEntity [id=" + id + ", avatar=" + avatar + ", username=" + username + ", password=" + password
-				+ ", confirmPassword=" + confirmPassword + ", firstname=" + firstname + ", lastname=" + lastname
-				+ ", address=" + address + ", city=" + city + ", district=" + district + ", ward=" + ward
-				+ ", birthday=" + birthday + ", day=" + day + ", month=" + month + ", year=" + year + ", gender="
-				+ gender + ", email=" + email + ", TimeCreateAccount=" + TimeCreateAccount + ", roles=" + roles + "]";
-	}
-
+	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<SimpleGrantedAuthority> roles = new ArrayList<SimpleGrantedAuthority>();

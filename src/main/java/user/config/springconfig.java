@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.hibernate.SessionFactory;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -127,6 +128,11 @@ public class springconfig extends WebMvcConfigurerAdapter {
 		TilesConfigurer.setDefinitions(new String[] { "/WEB-INF/tiles.xml" });
 		TilesConfigurer.setCheckRefresh(true);
 		return TilesConfigurer;
+	}
+	
+	@Bean
+	public ModelMapper modelMapper () {
+		return new ModelMapper();
 	}
 
 }

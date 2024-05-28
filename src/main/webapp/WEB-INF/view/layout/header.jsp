@@ -35,7 +35,7 @@
 					<div class="header-user-actions">
 	
 						<button class="action-btn">
-							<a style="color: #000" href="profile"> <ion-icon
+							<a auth-request style="color: #000" href="profile"> <ion-icon
 									name="person-outline"></ion-icon>
 							</a>
 						</button>
